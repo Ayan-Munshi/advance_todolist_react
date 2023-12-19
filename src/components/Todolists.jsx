@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
+import { Usecontext } from "../Todocontext";
 
-function Todolists() {
+function Todolists({todo}) {
+ 
+  const[todomsg,settodomsg] = useState(todo.todo)
+  const[istodoeditable,setistodoeditable] = useState(false)
+  const {deleteTodo,updatetodo,toggle} = Usecontext()
+
+  const edittodo =() => {               // this function is for onclick to edit the todo
+       updatetodo(todo.id,{...todo,todo:todomsg})
+       istodoeditable(false)
+  }
+  
+  const togglecomplete = () => {
+    toggle(todo.id)
+  }
+  
+
   return (
     <>
       <div
@@ -12,16 +28,16 @@ function Todolists() {
           type="checkbox"
           className="cursor-pointer"
           checked={todo.completed}
-          onChange={toggleCompleted}
+          onChange={togglecomplete}
         />
         <input
           type="text"
           className={`border outline-none w-full bg-transparent rounded-lg ${
-            isTodoEditable ? "border-black/10 px-2" : "border-transparent"
+            istodoeditable ? "border-black/10 px-2" : "border-transparent"
           } ${todo.completed ? "line-through" : ""}`}
-          value={todoMsg}
-          onChange={(e) => setTodoMsg(e.target.value)}
-          readOnly={!isTodoEditable}
+          value={todomsg}
+          onChange={(e) => settodomsg(e.target.value)}
+          readOnly={!istodoeditable}
         />
         {/* Edit, Save Button */}
         <button
@@ -29,20 +45,20 @@ function Todolists() {
           onClick={() => {
             if (todo.completed) return;
 
-            if (isTodoEditable) {
-              editTodo();
-            } else setIsTodoEditable((prev) => !prev);
+            if (istodoeditable) {
+              edittodo();
+            } else setistodoeditable((prev) => !prev);
           }}
           disabled={todo.completed}
         >
-          {isTodoEditable ? "📁" : "✏️"}
+          {istodoeditable ? "save" : "edit"}
         </button>
         {/* Delete Todo Button */}
         <button
           className="inline-flex w-8 h-8 rounded-lg text-sm border border-black/10 justify-center items-center bg-gray-50 hover:bg-gray-100 shrink-0"
           onClick={() => deleteTodo(todo.id)}
         >
-          ❌
+          delete task
         </button>
       </div>
     </>
